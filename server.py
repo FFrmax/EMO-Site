@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()  # DİKKAT: Bu iki satır en tepede, diğer her şeyden önce olmalı!
+
 import os
 import sqlite3
 import random
@@ -8,6 +11,8 @@ from functools import wraps
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, g
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from werkzeug.security import generate_password_hash, check_password_hash
+
+# ... kodunun geri kalanı olduğu gibi devam edebilir
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'emo-platform-secret-key-2024'
