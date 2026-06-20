@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EMO - Kayit Ol</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body data-theme="dark" class="auth-body">
+    <div class="auth-container">
+        <div class="auth-logo">
+            <h1>EMO</h1>
+            <p>Mesajlasma Platformu</p>
+        </div>
+        <div class="auth-card">
+            <h2>Kayit Ol</h2>
+            <p class="subtitle">Yeni hesap olusturun</p>
+
+            <div class="error-message" id="errorMsg"></div>
+            <div class="success-message" id="successMsg"></div>
+            <div class="emo-id-display" id="emoIdDisplay">
+                <div>Sizin EMO ID'niz:</div>
+                <div class="emo-id" id="emoIdValue"></div>
+                <div class="emo-note">Bu ID ile size mesaj atilabilir. Not edin!</div>
+            </div>
+
+            <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Gorunen Isim</label>
+                    <input type="text" id="displayName" placeholder="Adiniz" required>
+                    <div class="hint">Herkesin gorecegi isminiz</div>
+                </div>
+                <div class="form-group">
+                    <label>Kullanici Adi</label>
+                    <input type="text" id="username" placeholder="kullanici_adi" required autocomplete="username">
+                    <div class="hint">En az 3 karakter, benzersiz</div>
+                </div>
+                <div class="form-group">
+                    <label>Sifre</label>
+                    <input type="password" id="password" placeholder="En az 6 karakter" required autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label>Sifre Tekrar</label>
+                    <input type="password" id="passwordConfirm" placeholder="Sifrenizi tekrar girin" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="auth-btn" id="submitBtn">Hesap Olustur</button>
+            </form>
+
+            <div class="auth-footer">
+                Zaten hesabiniz var mi? <a href="/login">Giris Yap</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const err = document.getElementById('errorMsg');
+            const suc = document.getElementById('successMsg');
+            const pw = document.getElementById('password').value;
+            const pw2 = document.getElementById('passwordConfirm').value;
+
+            if (pw !== pw2) { err.textContent = 'Sifreler eslesmiyor'; err.style.display = 'block'; return; }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Olusturuluyor...';
+            err.style.display = 'none'; suc.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value.trim(),
+                        display_name: document.getElementById('displayName').value.trim(),
+                        password: pw
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    suc.textContent = 'Hesabiniz olusturuldu!';
+                    suc.style.display = 'block';
+                    document.getElementById('emoIdDisplay').style.display = 'block';
+                    document.getElementById('emoIdValue').textContent = data.emo_id;
+                    document.getElementById('registerForm').style.display = 'none';
+                    setTimeout(() => window.location.href = '/chat', 3000);
+                } else {
+                    err.textContent = data.error || 'Kayit basarisiz';
+                    err.style.display = 'block';
+                    btn.disabled = false; btn.textContent = 'Hesap Olustur';
+                }
+            } catch (ex) {
+                err.textContent = 'Baglanti hatasi';
+                err.style.display = 'block';
+                btn.disabled = false; btn.textContent = 'Hesap Olustur';
+            }
+        }
+    </script>
+</body>
+</html>
