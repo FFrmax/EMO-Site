@@ -586,4 +586,4 @@ if __name__ == '__main__':
     print("  Ag:      http://0.0.0.0:5000")
     print("  Admin:   http://localhost:5000/admin")
     print("="*50 + "\n")
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)
