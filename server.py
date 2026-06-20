@@ -578,12 +578,5 @@ def handle_mark_read(data):
 
 
 if __name__ == '__main__':
-    init_db()
-    print("\n" + "="*50)
-    print("       EMO Mesajlasma Platformu")
-    print("="*50)
-    print("  Yerel:   http://localhost:5000")
-    print("  Ag:      http://0.0.0.0:5000")
-    print("  Admin:   http://localhost:5000/admin")
-    print("="*50 + "\n")
-    socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host='0.0.0.0', port=port) # debug=True kısmını tamamen SİL
